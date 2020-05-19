@@ -239,7 +239,6 @@ def worker_pool(input, output):
 
 def check_proxies(pr, wu, ua):
     '''run concurent processes'''
-    num = len(pr) - 1
     task_queue = mp.Queue()
     done_queue = mp.Queue()
     for p in pr:
@@ -247,10 +246,15 @@ def check_proxies(pr, wu, ua):
     for p in pr:
         mp.Process(target=worker_pool, args=(task_queue, done_queue)).start()
     proxies = set()
-    for i in range(num):
+    num = len(pr)
+    i = 0
+    while i < num:
+        i += 1
         res = done_queue.get()
         if res: proxies.add(res)
-    for i in range(num):
+    i = 0
+    while i < num:
+        i += 1
         task_queue.put('STOP')
     return proxies
 
