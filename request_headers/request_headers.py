@@ -132,12 +132,13 @@ class proxies_row():
         self.proxies_raw = []
 
         settings = None
-        try: from .settings import settings
-        except: pass
-        try: from settings import settings
-        except: pass            
+        # try: from .settings import settings
+        # except: pass
+        # try: from settings import settings
+        # except: pass            
         if settings:
-            self.prx = settings.DATABASES['pr_remote']['HOST']
+            # self.prx = settings.DATABASES['pr_remote']['HOST']
+            self.prx = 'app.ecommaker.com'
 
     def next(self, prms=None):
         if not prms: prms = {'ptype': 'pr', 'check': False}
