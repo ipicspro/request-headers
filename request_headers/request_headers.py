@@ -61,7 +61,7 @@ class random_row():
 
 
 
-# weburl generator
+# referer generator
 class weburl_row():
     '''weburl test generator, every next url is new'''
     def __init__(self):
@@ -130,17 +130,20 @@ class proxies_row():
         self.headers = {'User-Agent': self.ua}
         self.proxies = set()
         self.proxies_raw = []
+        self.prx = 'app.ecommaker.com'
 
-        settings = None
+        # settings = None
         # try: from .settings import settings
         # except: pass
         # try: from settings import settings
         # except: pass            
-        if settings:
-            # self.prx = settings.DATABASES['pr_remote']['HOST']
-            self.prx = 'app.ecommaker.com'
+        # if settings:
+        #    self.prx = settings.DATABASES['pr_remote']['HOST']
 
     def next(self, prms=None):
+        if prms:
+            if 'prx' in prms:
+                self.prx = prms['prx']
         if not prms: prms = {'ptype': 'pr', 'check': False}
         if len(self.proxies) == 0:
             if prms:
