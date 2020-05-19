@@ -5,8 +5,8 @@ import csv
 import random
 import requests
 from requests.exceptions import ConnectionError, ReadTimeout, Timeout
-# from fake_useragent import UserAgent, settings as fake_setttings
-# from fake_useragent import FakeUserAgentError
+from fake_useragent import UserAgent, settings as fake_setttings
+from fake_useragent import FakeUserAgentError
 from bs4 import BeautifulSoup as bs
 import time
 

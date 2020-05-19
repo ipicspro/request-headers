@@ -1,3 +1,5 @@
 env/
 .vscode/
+.eggs/
+request_headers.egg-info/
 notes.txt

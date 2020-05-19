@@ -11,6 +11,6 @@ setup(name='request-headers',
       packages=find_packages(exclude=['tests']),
       long_description=open('README.md').read(),
       zip_safe=False,
-      setup_requires=['nose>=1.0'],
+      setup_requires=['nose', 'requests', 'beautifulsoup4', 'fake-useragent'],
       test_suite='nose.collector')
 
