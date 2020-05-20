@@ -3119,6 +3119,7 @@ class useragents():
 class screensizes():
     '''screen size generator, every next screen size is new'''
     def __init__(self):
+        self.l = []
         self.l = random_list(ss().l, 'list')
     def next(self):
         return self.l.next()
@@ -3129,6 +3130,7 @@ class screensizes():
 class referers():
     '''weburl test generator, every next url is new'''
     def __init__(self):
+        self.l = []
         self.l = random_list(rf().l, 'list')
     def next(self):
         return self.l.next()
@@ -3140,6 +3142,7 @@ class proxies():
     ''' proxy generator, every next proxy is always new '''
     def __init__(self):
         self.rf = referers()
+        self.u = []
         self.u = useragents()  # generate list of user agents
         self.ua = self.u.next()
         self.headers = {'User-Agent': self.ua}
@@ -3224,7 +3227,7 @@ class proxies():
             if https_flag == 'yes': https = 'https'
             else: https = 'http'
             proxy = ':'.join([item.text for item in items.select("td")[:2]])
-            if len(proxies) <= len(self.rf.rf_list.list):
+            if len(proxies) <= len(self.rf.l.list):
                 proxies.append((https, proxy))
             else: break
         self.proxies_row = proxies
