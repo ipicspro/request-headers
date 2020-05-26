@@ -3121,8 +3121,18 @@ class screensizes():
     def __init__(self):
         self.l = []
         self.l = random_list(ss().l, 'list')
+        self.double = []
+        self.double = random_list([0,1], 'minmax')
+    def gen_next(self):
+        d = self.double.next()
+        if d == 0: return self.l.next()
+        else: return self.generate_screensize()
+    def generate_screensize(self):
+        x = random.randint(650, 3500)
+        y = random.randint(500, 2000)
+        return f'{x}x{y}'
     def next(self):
-        return self.l.next()
+        return self.gen_next()
 
 
 
@@ -3256,14 +3266,15 @@ class proxies():
     #         print(f'err url: {url} - {e}')
 
 # # test generators
-# u = useragents()
-# print(u.next())
-# s = screensizes()
-# print(s.next())
-# r = referers()
-# print(r.next())
-# p = proxies()
-# print(p.next({'ptype': 'pr', 'check': False}))
+# for i in range(0, 10):
+#     # u = useragents()
+#     # print(u.next())
+#     s = screensizes()
+#     print(s.next())
+#     # r = referers()
+#     # print(r.next())
+#     # p = proxies()
+#     # print(p.next({'ptype': 'pr', 'check': False}))
 
 
 # if __name__ == '__main__':
