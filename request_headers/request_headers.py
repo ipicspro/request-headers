@@ -3159,19 +3159,33 @@ class proxies():
         self.proxies = set()
         self.proxies_row = []
         self.prx = 'app.ecommaker.com'
+        self.pr_key = 'be35ed15fc61579f6e620c2dc3522ffa'
+        self.pr_amount = 5
+        self.pr_url = f'http://{self.prx}/pr/'
 
-        # settings = None
-        # try: from .settings import settings
-        # except: pass
-        # try: from settings import settings
-        # except: pass            
-        # if settings:
-        #    self.prx = settings.DATABASES['pr_remote']['HOST']
+    def clean(self):
+        url = f'{self.pr_url}api?get=0&key={self.pr_key}'
+        ua = 'prx'
+        r = requests.Session()
+        r.headers._store['user-agent'] = ('User-Agent', ua)
+        headers = {'User-Agent': ua}
+        timeout = 10
+        try:
+            res = r.get(url, headers=headers, timeout=timeout)
+            if res.status_code != 200:
+                r.close()
+                return False
+        except:
+            r.close()
+            return False
+        r.close()
 
     def next(self, prms=None):
         if prms:
             if 'prx' in prms:
                 self.prx = prms['prx']
+                self.pr_url = f'http://{self.prx}/pr/'
+            if 'n' in prms: self.pr_amount = prms['n']
         if not prms: prms = {'ptype': 'pr', 'check': False}
         if len(self.proxies) == 0:
             if prms:
@@ -3191,13 +3205,7 @@ class proxies():
     def get_proxies_pr(self):
         '''return list of proxies as tuples ('https|http', 'ip:port')'''
         proxies = []
-        # pr_url = 'http://192.168.58.1/pr/'
-        pr_url = f'http://{self.prx}/pr/'
-        pr_amount = 5
-        pr_key = 'be35ed15fc61579f6e620c2dc3522ffa'
-        url = f'{pr_url}api?get={pr_amount}&key={pr_key}'
-        # http://192.168.58.1/pr/api?get=10&key=be35ed15fc61579f6e620c2dc3522ffa
-
+        url = f'{self.pr_url}api?get={self.pr_amount}&key={self.pr_key}'
         ua = 'prx'
         r = requests.Session()
         r.headers._store['user-agent'] = ('User-Agent', ua)
@@ -3205,10 +3213,16 @@ class proxies():
         timeout = 10
         try:
             res = r.get(url, headers=headers, timeout=timeout)
-            if res.status_code != 200: return False
-        except: return False
-
+            if res.status_code != 200:
+                r.close()
+                return False
+        except:
+            r.close()
+            return False
+        
         resd = json.loads(res.text)
+        r.close()
+
         for r in resd:
             proxies.append((r['proto'], f"{r['host']}:{r['port']}"))
 
