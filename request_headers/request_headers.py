@@ -3156,6 +3156,7 @@ class proxies():
         self.u = useragents()  # generate list of user agents
         self.ua = self.u.next()
         self.headers = {'User-Agent': self.ua}
+        self.timeout = 10
         self.proxies = set()
         self.proxies_row = []
         self.prx = 'app.ecommaker.com'
@@ -3179,6 +3180,31 @@ class proxies():
             r.close()
             return False
         r.close()
+        return True
+
+    def last_status(self,prms=None):
+        if not prms: return False
+        host = prms['host']
+        port = prms['port']
+        status = prms['status']
+
+        url = f'{self.pr_url}api?h={host}&p={port}&s={status}&key={self.pr_key}'
+        ua = 'prx'
+        r = requests.Session()
+        r.headers._store['user-agent'] = ('User-Agent', ua)
+        headers = {'User-Agent': ua}
+        
+        try:
+            res = r.post(url, headers=headers, timeout=self.timeout)
+            if res.status_code != 200:
+                r.close()
+                return False
+        except:
+            r.close()
+            return False
+
+        r.close()
+        return True
 
     def next(self, prms=None):
         if prms:
@@ -3212,7 +3238,7 @@ class proxies():
         headers = {'User-Agent': ua}
         timeout = 10
         try:
-            res = r.get(url, headers=headers, timeout=timeout)
+            res = r.get(url, headers=headers, timeout=self.timeout)
             if res.status_code != 200:
                 r.close()
                 return False
@@ -3227,7 +3253,6 @@ class proxies():
             proxies.append((r['proto'], f"{r['host']}:{r['port']}"))
 
         self.proxies_row = proxies
-
 
     def get_proxies_def(self):
         '''return list of proxies as tuples ('https|http', 'ip:port')'''
