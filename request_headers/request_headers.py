@@ -3232,7 +3232,9 @@ class proxies():
         if self.proxies: next_proxy = self.proxies.pop()
         else:
             ntimes = 10
+            i = 0
             while i < ntimes:
+                i += 1
                 next_proxy = self.get()
                 if next_proxy: return next_proxy
 
@@ -3314,16 +3316,17 @@ class proxies():
     #         print(f'err url: {url} - {e}')
 
 # #test generators
-# u = useragents()
-# s = screensizes()
-# r = referers()
+# # u = useragents()
+# # s = screensizes()
+# # r = referers()
 # p = proxies()
 # for i in range(0, 1000):
-#     print(u.get())
-#     print(s.get())
-#     print(r.get())
+#     # print(u.get())
+#     # print(s.get())
+#     # print(r.get())
 #     # print(p.clean())
-#     print(p.get())
+#     pr = p.get()
+#     print(pr)
 #     # print(p.last_status())
 #     # print(p.get({'ptype': 'pr', 'check': False}))
 
