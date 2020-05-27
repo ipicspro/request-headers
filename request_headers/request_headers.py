@@ -57,7 +57,7 @@ def check_proxies(pr, wu, ua):
     task_queue = mp.Queue()
     done_queue = mp.Queue()
     for p in pr:
-        task_queue.put((p, wu.next(), ua.next()))
+        task_queue.put((p, wu.get(), ua.get()))
     for p in pr:
         mp.Process(target=worker_pool, args=(task_queue, done_queue)).start()
     proxies = set()
@@ -3058,7 +3058,7 @@ class random_list():
         self.update = 0
         if rtype == "file": self.list = get_file_rows(obj, encoding)
         elif rtype == "list" or rtype == "minmax": self.list = obj
-    def next(self):
+    def get(self):
         if self.list:
             if self.update == 0:
                 random.shuffle(self.list)
@@ -3092,8 +3092,8 @@ class useragents():
         if self.type == 0: self.activate_ua()
         else: self.activate_fua()
 
-    def next(self):
-        if self.type == 0: return self.ua_list.next()
+    def get(self):
+        if self.type == 0: return self.ua_list.get()
         else:
             try:
                 if self.used == fake_setttings.BROWSERS_COUNT_LIMIT: self.ua_fake.update
@@ -3123,16 +3123,16 @@ class screensizes():
         self.l = random_list(ss().l, 'list')
         self.double = []
         self.double = random_list([0,1], 'minmax')
-    def gen_next(self):
-        d = self.double.next()
-        if d == 0: return self.l.next()
+    def get(self):
+        d = self.double.get()
+        if d == 0: return self.l.get()
         else: return self.generate_screensize()
     def generate_screensize(self):
         x = random.randint(650, 3500)
         y = random.randint(500, 2000)
         return f'{x}x{y}'
-    def next(self):
-        return self.gen_next()
+    # def get(self):
+    #     return self.get()
 
 
 
@@ -3142,8 +3142,8 @@ class referers():
     def __init__(self):
         self.l = []
         self.l = random_list(rf().l, 'list')
-    def next(self):
-        return self.l.next()
+    def get(self):
+        return self.l.get()
 
 
 
@@ -3154,7 +3154,7 @@ class proxies():
         self.rf = referers()
         self.u = []
         self.u = useragents()  # generate list of user agents
-        self.ua = self.u.next()
+        self.ua = self.u.get()
         self.headers = {'User-Agent': self.ua}
         self.timeout = 10
         self.proxies = set()
@@ -3206,13 +3206,15 @@ class proxies():
         r.close()
         return True
 
-    def next(self, prms=None):
+    def get(self, prms=None):
         if prms:
             if 'prx' in prms:
                 self.prx = prms['prx']
                 self.pr_url = f'http://{self.prx}/pr/'
             if 'n' in prms: self.pr_amount = prms['n']
+
         if not prms: prms = {'ptype': 'pr', 'check': False}
+
         if len(self.proxies) == 0:
             if prms:
                 ptype = prms['ptype']
@@ -3224,8 +3226,16 @@ class proxies():
             else:
                 self.get_proxies_def()
                 self.proxies = check_proxies(self.proxies_row, self.rf, self.u)
+
+        next_proxy = None
+
         if self.proxies: next_proxy = self.proxies.pop()
-        else: next_proxy = None
+        else:
+            ntimes = 10
+            while i < ntimes:
+                next_proxy = self.get()
+                if next_proxy: return next_proxy
+
         return next_proxy
 
     def get_proxies_pr(self):
@@ -3236,7 +3246,6 @@ class proxies():
         r = requests.Session()
         r.headers._store['user-agent'] = ('User-Agent', ua)
         headers = {'User-Agent': ua}
-        timeout = 10
         try:
             res = r.get(url, headers=headers, timeout=self.timeout)
             if res.status_code != 200:
@@ -3293,7 +3302,7 @@ class proxies():
 
 # # check test urls
     # r = requests.Session()
-    # ua = USERAGENTS.next()
+    # ua = USERAGENTS.get()
     # r.headers._store['user-agent'] = ('User-Agent', ua)
     # headers = {'User-Agent': ua}
     # for url in web_test_list:
@@ -3304,16 +3313,19 @@ class proxies():
     #     except Exception as e:
     #         print(f'err url: {url} - {e}')
 
-# # test generators
-# for i in range(0, 10):
-#     # u = useragents()
-#     # print(u.next())
-#     s = screensizes()
-#     print(s.next())
-#     # r = referers()
-#     # print(r.next())
-#     # p = proxies()
-#     # print(p.next({'ptype': 'pr', 'check': False}))
+# #test generators
+# u = useragents()
+# s = screensizes()
+# r = referers()
+# p = proxies()
+# for i in range(0, 1000):
+#     print(u.get())
+#     print(s.get())
+#     print(r.get())
+#     # print(p.clean())
+#     print(p.get())
+#     # print(p.last_status())
+#     # print(p.get({'ptype': 'pr', 'check': False}))
 
 
 # if __name__ == '__main__':
