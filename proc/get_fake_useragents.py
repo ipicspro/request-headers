@@ -48,6 +48,8 @@ def main():
             or 'iphone' in ua_check
             or 'ipad' in ua_check
             or 'android' in ua_check
+            or 'Trident/4.0' in ua_check
+            or 'Trident/5.0' in ua_check
         ): continue
         
         
