@@ -625,7 +625,7 @@ class proxies():
         self.timeout = 10
         self.proxies = set()
         self.proxies_row = []
-        self.prx = 'app.ecommaker.com'
+        self.prx = 'api.ecommaker.com'
         self.pr_key = 'be35ed15fc61579f6e620c2dc3522ffa'
         self.pr_amount = 5
         self.pr_url = f'http://{self.prx}/pr/'
