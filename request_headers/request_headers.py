@@ -33,6 +33,7 @@ def get_file_rows(obj, encoding='utf-8'):
 
 def check_proxy(f):
     '''check the proxy'''
+    if not f: return False
     pr, url, ua = f
     r = requests.Session()
     r.headers._store['user-agent'] = ('User-Agent', ua)
@@ -723,6 +724,10 @@ class proxies():
             r.close()
             return False
         
+        if not res.text:
+            r.close()
+            return False
+
         resd = json.loads(res.text)
         r.close()
 
