@@ -626,6 +626,8 @@ class proxies():
         self.timeout = 10
         self.proxies = set()
         self.proxies_row = []
+        # self.proxy_tor = ('socks5', '51.38.115.31:9050')
+        self.proxy_tor = ('socks5', 'tr.ecommaker.com:9050')
         self.prx = 'api.ecommaker.com'
         self.pr_key = 'be35ed15fc61579f6e620c2dc3522ffa'
         self.pr_amount = 5
@@ -649,11 +651,22 @@ class proxies():
         r.close()
         return True
 
-    def last_status(self,prms=None):
-        if not prms: return False
-        host = prms['host']
-        port = prms['port']
-        status = prms['status']
+    def last_status(self, prms=None, **kwargs):
+
+        # deprecated
+        # if not prms: return False
+
+        # deprecated
+        if prms:
+            host = prms['host']
+            port = prms['port']
+            status = prms['status']
+
+        host = kwargs.get('host', None)
+        port = kwargs.get('port', None)
+        status = kwargs.get('status', None)
+
+        if not host or not port or status == None: return False
 
         url = f'{self.pr_url}api?h={host}&p={port}&s={status}&key={self.pr_key}'
         ua = 'prx'
@@ -673,26 +686,47 @@ class proxies():
         r.close()
         return True
 
-    def get(self, prms=None):
+
+    def get(self, prms=None, **kwargs):
+
+        ptype = kwargs.get('ptype', 'tor')
+        check = kwargs.get('check', False)
+        prx = kwargs.get('prx', None)
+        self.pr_amount = kwargs.get('n', self.pr_amount)
+
+        # deprecated
         if prms:
             if 'prx' in prms:
                 self.prx = prms['prx']
                 self.pr_url = f'http://{self.prx}/pr/'
             if 'n' in prms: self.pr_amount = prms['n']
+        
+        if prx:
+            self.prx = prx
+            self.pr_url = f'http://{self.prx}/pr/'
 
-        if not prms: prms = {'ptype': 'pr', 'check': False}
+        # deprecated
+        # if not prms: prms = {'ptype': 'tor', 'check': False}
 
         if len(self.proxies) == 0:
+            
+            # deprecated
             if prms:
                 ptype = prms['ptype']
                 check = prms['check']
-                if ptype == 'default': self.get_proxies_def()
-                elif ptype == 'pr': self.get_proxies_pr()  # project 'proxy'
-                if check: self.proxies = check_proxies(self.proxies_row, self.rf, self.u)
-                else: self.proxies = self.proxies_row
-            else:
-                self.get_proxies_def()
-                self.proxies = check_proxies(self.proxies_row, self.rf, self.u)
+            
+            if ptype == 'default': self.get_proxies_def()  # from webpage 'https://free-proxy-list.net/'
+            elif ptype == 'pr': self.get_proxies_pr()  # project 'proxy'
+            elif ptype == 'tor': self.proxies_row = [self.proxy_tor]
+            
+            if check: self.proxies = check_proxies(self.proxies_row, self.rf, self.u)
+            else: self.proxies = self.proxies_row
+            
+            # else:
+            #     self.get_proxies_def()
+            #     self.proxies = check_proxies(self.proxies_row, self.rf, self.u)
+
+
 
         next_proxy = None
 
@@ -706,6 +740,7 @@ class proxies():
                 if next_proxy: return next_proxy
 
         return next_proxy
+
 
     def get_proxies_pr(self):
         '''return list of proxies as tuples ('https|http', 'ip:port')'''
@@ -735,6 +770,7 @@ class proxies():
             proxies.append((r['proto'], f"{r['host']}:{r['port']}"))
 
         self.proxies_row = proxies
+
 
     def get_proxies_def(self):
         '''return list of proxies as tuples ('https|http', 'ip:port')'''
