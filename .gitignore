@@ -1,0 +1,8 @@
+.env
+env/
+.vscode/
+.eggs/
+build
+request_headers.egg-info/
+test.py
+notes.txt
