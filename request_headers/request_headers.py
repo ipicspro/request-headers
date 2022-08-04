@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 
+import os
 import json
 import csv
 import random
 import requests
-from requests.exceptions import ConnectionError, ReadTimeout, Timeout
+# from requests.exceptions import ConnectionError, ReadTimeout, Timeout
 from fake_useragent import UserAgent, settings as fake_setttings
 from fake_useragent import FakeUserAgentError
 from bs4 import BeautifulSoup as bs
-import time
+# import time
 
 import multiprocessing as mp
 
-from decouple import config
+# from decouple import config
 
 
 
@@ -1422,9 +1423,12 @@ class proxies():
         self.proxies = set()
         self.proxies_row = []
         # self.proxy_tor = ('socks5', '51.38.115.31:9050')
-        self.proxy_tor = ('socks5', config('PROXY_TOR'))
-        self.prx = config('PRX')
-        self.pr_key = config('PR_KEY')
+        # self.proxy_tor = ('socks5', config('PROXY_TOR'))
+        # self.prx = config('PRX')
+        # self.pr_key = config('PR_KEY')
+        self.proxy_tor = ('socks5', os.environ['PROXY_TOR'])
+        self.prx = os.environ['PRX']
+        self.pr_key = os.environ['PR_KEY']
         self.pr_amount = 5
         self.pr_url = f'http://{self.prx}/pr/'
 
