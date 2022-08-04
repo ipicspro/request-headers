@@ -5,7 +5,7 @@ import json
 import csv
 import random
 import requests
-# from requests.exceptions import ConnectionError, ReadTimeout, Timeout
+from requests.exceptions import ConnectionError, ReadTimeout, Timeout
 from fake_useragent import UserAgent, settings as fake_setttings
 from fake_useragent import FakeUserAgentError
 from bs4 import BeautifulSoup as bs
@@ -1424,15 +1424,32 @@ class proxies():
         self.proxies_row = []
         # self.proxy_tor = ('socks5', '51.38.115.31:9050')
 
-        self.proxy_tor = ('socks5', config('PROXY_TOR'))
-        if not self.proxy_tor: self.proxy_tor = ('socks5', os.environ['PROXY_TOR'])
+        proxy_tor = os.environ['PROXY_TOR']
+        if not proxy_tor:
+            try: proxy_tor = config('PROXY_TOR')
+            except: pass
+        if not proxy_tor:
+            try: proxy_tor = PROXY_TOR
+            except: pass
+        self.proxy_tor = ('socks5', proxy_tor)
+            
 
-        self.prx = config('PRX')
-        if not self.prx: self.prx = os.environ['PRX']
-
-        self.pr_key = config('PR_KEY')
-        if not self.pr_key: self.pr_key = os.environ['PR_KEY']
+        self.prx = os.environ['PRX']
+        if not self.prx:
+            try: self.prx = config('PRX')
+            except: pass
+        if not self.prx:
+            try: self.prx = PRX
+            except: pass
         
+        self.pr_key = os.environ['PR_KEY']
+        if not self.pr_key:
+            try: self.pr_key = config('PR_KEY')
+            except: pass
+        if not self.pr_key:
+            try: self.pr_key = PR_KEY
+            except: pass
+
         self.pr_amount = 5
         self.pr_url = f'http://{self.prx}/pr/'
 
