@@ -1424,7 +1424,7 @@ class proxies():
         self.proxies_row = []
         # self.proxy_tor = ('socks5', '51.38.115.31:9050')
 
-        proxy_tor = os.environ['PROXY_TOR']
+        proxy_tor = os.environ.get('PROXY_TOR')
         if not proxy_tor:
             try: proxy_tor = config('PROXY_TOR')
             except: pass
@@ -1434,7 +1434,7 @@ class proxies():
         self.proxy_tor = ('socks5', proxy_tor)
             
 
-        self.prx = os.environ['PRX']
+        self.prx = os.environ.get('PRX')
         if not self.prx:
             try: self.prx = config('PRX')
             except: pass
@@ -1442,7 +1442,7 @@ class proxies():
             try: self.prx = PRX
             except: pass
         
-        self.pr_key = os.environ['PR_KEY']
+        self.pr_key = os.environ.get('PR_KEY')
         if not self.pr_key:
             try: self.pr_key = config('PR_KEY')
             except: pass
