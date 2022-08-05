@@ -1441,13 +1441,13 @@ class proxies():
         
         proxy_tor = kwargs.get('proxy_tor', None)
         prx = kwargs.get('prx', None)
-        self.pr_key = kwargs.get('pr_key', None)
+        pr_key = kwargs.get('pr_key', None)
 
         if not proxy_tor or not prx or not pr_key:
             raise
 
         self.proxy_tor = ('socks5', proxy_tor) if proxy_tor else None
-        # self.pr_key = os.environ.get('PR_KEY')
+        self.pr_key = pr_key
         self.pr_url = f'http://{self.prx}/pr/' if self.prx else None
 
 
