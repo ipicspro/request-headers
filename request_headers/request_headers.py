@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup as bs
 
 import multiprocessing as mp
 
-from decouple import config
+# from decouple import config
 
 
 
@@ -1413,7 +1413,9 @@ class referers():
 # proxy generator
 class proxies():
     ''' proxy generator, every next proxy is always new '''
-    def __init__(self):
+
+    def __init__(self, **kwargs):
+
         self.rf = referers()
         self.u = []
         self.u = useragents()  # generate list of user agents
@@ -1424,34 +1426,30 @@ class proxies():
         self.proxies_row = []
         # self.proxy_tor = ('socks5', '51.38.115.31:9050')
 
-        proxy_tor = os.environ.get('PROXY_TOR')
-        if not proxy_tor:
-            try: proxy_tor = config('PROXY_TOR')
-            except: pass
-        if not proxy_tor:
-            try: proxy_tor = PROXY_TOR
-            except: pass
-        self.proxy_tor = ('socks5', proxy_tor)
+        proxy_tor = kwargs.get('proxy_tor', os.environ.get('PROXY_TOR'))
+        self.proxy_tor = ('socks5', proxy_tor) if proxy_tor else None
             
 
-        self.prx = os.environ.get('PRX')
-        if not self.prx:
-            try: self.prx = config('PRX')
-            except: pass
-        if not self.prx:
-            try: self.prx = PRX
-            except: pass
+        self.prx = kwargs.get('prx', os.environ.get('PRX'))
         
-        self.pr_key = os.environ.get('PR_KEY')
-        if not self.pr_key:
-            try: self.pr_key = config('PR_KEY')
-            except: pass
-        if not self.pr_key:
-            try: self.pr_key = PR_KEY
-            except: pass
+        self.pr_key = kwargs.get('pr_key', os.environ.get('PR_KEY'))
 
         self.pr_amount = 5
-        self.pr_url = f'http://{self.prx}/pr/'
+        self.pr_url = f'http://{self.prx}/pr/' if self.prx else None
+    
+    def setup(self, **kwargs):
+        
+        proxy_tor = kwargs.get('proxy_tor', None)
+        prx = kwargs.get('prx', None)
+        self.pr_key = kwargs.get('pr_key', None)
+
+        if not proxy_tor or not prx or not pr_key:
+            raise
+
+        self.proxy_tor = ('socks5', proxy_tor) if proxy_tor else None
+        # self.pr_key = os.environ.get('PR_KEY')
+        self.pr_url = f'http://{self.prx}/pr/' if self.prx else None
+
 
     def clean(self):
         url = f'{self.pr_url}api?get=0&key={self.pr_key}'
@@ -1508,6 +1506,9 @@ class proxies():
 
 
     def get(self, prms=None, **kwargs):
+
+        if not self.proxy_tor or not self.prx or not self.pr_key:
+            raise
 
         ptype = kwargs.get('ptype', 'tor')
         check = kwargs.get('check', False)
