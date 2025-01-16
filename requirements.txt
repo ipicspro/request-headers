@@ -1,5 +1,5 @@
 beautifulsoup4
-fake-useragent
+fake-useragent==1.5.1
 requests
 python-decouple
 wheel

@@ -13,6 +13,6 @@ setup(name='request-headers',
     long_description=open('README.md').read(),
     zip_safe=False,
     setup_requires=['nose'],
-    install_requires=['requests', 'python-decouple', 'beautifulsoup4', 'fake-useragent'],
+    install_requires=['requests', 'python-decouple', 'beautifulsoup4', 'fake-useragent==1.5.1'],
     test_suite='nose.collector')
 
